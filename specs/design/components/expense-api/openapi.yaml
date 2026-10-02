@@ -1,0 +1,250 @@
+openapi: 3.0.3
+info:
+  title: Expense Claims API
+  version: 0.1.0
+  description: Expense claims and the employee reporting hierarchy.
+servers:
+  - url: /
+paths:
+  /me/claims:
+    get:
+      operationId: listMyClaims
+      summary: The caller's own claims
+      security:
+        - oauth2: [claims:read]
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20, maximum: 100 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+        - name: status
+          in: query
+          schema: { type: string, enum: [submitted, approved, rejected] }
+      responses:
+        '200':
+          description: The caller's claims, newest first
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [count, data]
+                properties:
+                  count: { type: integer, description: total matching items }
+                  next: { type: string, nullable: true, description: relative URI of the next page }
+                  previous: { type: string, nullable: true, description: relative URI of the previous page }
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Claim' }
+        '401':
+          description: Not signed in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    post:
+      operationId: submitMyClaim
+      summary: Submit a new claim
+      security:
+        - oauth2: [claims:submit]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ClaimInput' }
+      responses:
+        '201':
+          description: Claim submitted to the caller's manager
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Claim' }
+        '400':
+          description: Invalid claim, or the receipt was flagged as gambling/betting
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          description: Not signed in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /me/claims/{claimId}:
+    get:
+      operationId: getMyClaim
+      summary: The caller's own claim
+      security:
+        - oauth2: [claims:read]
+      parameters:
+        - name: claimId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The claim
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Claim' }
+        '401':
+          description: Not signed in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: No such claim for the caller
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /me/team/claims:
+    get:
+      operationId: listTeamClaims
+      summary: Claims submitted by the caller's direct reports
+      security:
+        - oauth2: [claims:read-team]
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20, maximum: 100 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+        - name: status
+          in: query
+          schema: { type: string, enum: [submitted, approved, rejected] }
+      responses:
+        '200':
+          description: The caller's team's claims, newest first
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [count, data]
+                properties:
+                  count: { type: integer, description: total matching items }
+                  next: { type: string, nullable: true, description: relative URI of the next page }
+                  previous: { type: string, nullable: true, description: relative URI of the previous page }
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Claim' }
+        '401':
+          description: Not signed in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /me/team/claims/{claimId}/approve:
+    post:
+      operationId: approveTeamClaim
+      summary: Approve a direct report's submitted claim
+      security:
+        - oauth2: [claims:approve]
+      parameters:
+        - name: claimId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The approved claim
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Claim' }
+        '400':
+          description: The claim is not awaiting a decision
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          description: Not signed in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: No such claim among the caller's direct reports
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /me/team/claims/{claimId}/reject:
+    post:
+      operationId: rejectTeamClaim
+      summary: Reject a direct report's submitted claim
+      security:
+        - oauth2: [claims:reject]
+      parameters:
+        - name: claimId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The rejected claim
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Claim' }
+        '400':
+          description: The claim is not awaiting a decision
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          description: Not signed in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: No such claim among the caller's direct reports
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth2/authorize
+          tokenUrl: /oauth2/token
+          scopes:
+            claims:read: The caller's own claims
+            claims:submit: Create and submit a claim
+            claims:read-team: Claims submitted by the caller's direct reports
+            claims:approve: Approve a submitted claim from a direct report
+            claims:reject: Reject a submitted claim from a direct report
+  schemas:
+    Claim:
+      type: object
+      required: [id, employeeId, merchant, claimDate, total, status, receiptUrl, createdAt]
+      properties:
+        id: { type: string }
+        employeeId: { type: string }
+        merchant: { type: string }
+        claimDate: { type: string, format: date }
+        total: { type: number, format: double }
+        note: { type: string }
+        receiptUrl: { type: string }
+        status: { type: string, enum: [submitted, approved, rejected] }
+        gamblingFlagged: { type: boolean, default: false }
+        decidedBy: { type: string, nullable: true }
+        decidedAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+    ClaimInput:
+      type: object
+      required: [merchant, claimDate, total, receiptUrl, gamblingFlagged]
+      properties:
+        merchant: { type: string }
+        claimDate: { type: string, format: date }
+        total: { type: number, format: double }
+        note: { type: string, description: May include the employee's own contact details for finance to follow up. }
+        receiptUrl: { type: string }
+        gamblingFlagged:
+          type: boolean
+          description: Set from the receipt reader's extraction; a true value is refused.
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: integer, description: HTTP or application error code }
+        message: { type: string, description: short human-readable label }
+        description: { type: string, description: detailed explanation }
+        moreInfo: { type: string, description: URI to documentation }
+security:
+  - oauth2: []

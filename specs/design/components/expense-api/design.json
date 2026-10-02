@@ -1,0 +1,17 @@
+{
+  "name": "expense-api",
+  "type": "service",
+  "version": "0.1.0",
+  "language": "Ballerina",
+  "buildpack": "docker",
+  "appPath": "expense-api",
+  "entrypoint": "deployment/service",
+  "exposure": "internet",
+  "dependencies": [
+    { "kind": "platform-resource", "name": "thunder", "resourceType": "thunder-app" },
+    { "kind": "platform-resource", "name": "claims-db", "resourceType": "postgres-cnpg" }
+  ],
+  "description": "Owns expense claims and the employee reporting hierarchy. Creates a claim for the signed-in employee, lists the caller's own claims, lists the claims of the caller's direct reports, and lets a manager approve or reject a direct report's claim. Refuses to create a claim the receipt reader flagged as gambling/betting. Does not read receipts or call any model itself — expense-webapp calls receipt-reader directly and sends this service only the (possibly corrected) extracted fields.",
+  "stories": [1, 2, 3, 4, 5, 6, 7, 8],
+  "skillsPinned": ["openapi-conventions", "ballerina", "thunder-authentication", "api-management"]
+}

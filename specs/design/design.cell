@@ -1,0 +1,23 @@
+title expense-claims-guard
+
+component expense-webapp as "Expense Claims" web-application
+component expense-api as "Expense Claims API" service
+component receipt-reader as "Receipt Reader" ai-agent
+component claims-db as "Claims Database" database
+component memory-db as "Receipt Reader Memory" database
+
+east thunder as "Thunder Auth" identity-server
+
+north -> expense-webapp
+north -> expense-api
+north -> receipt-reader
+
+expense-webapp -> expense-api
+expense-webapp -> receipt-reader
+expense-webapp -> thunder
+
+expense-api -> thunder
+expense-api -> claims-db
+
+receipt-reader -> thunder
+receipt-reader -> memory-db

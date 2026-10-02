@@ -1,0 +1,17 @@
+{
+  "name": "receipt-reader",
+  "type": "ai-agent",
+  "version": "0.1.0",
+  "language": "TypeScript",
+  "buildpack": "docker",
+  "appPath": "receipt-reader",
+  "entrypoint": "deployment/ai-agent",
+  "exposure": "internet",
+  "dependencies": [
+    { "kind": "platform-resource", "name": "thunder", "resourceType": "thunder-app" },
+    { "kind": "platform-resource", "name": "memory-db", "resourceType": "postgres-cnpg" }
+  ],
+  "description": "Reads an uploaded receipt photo or PDF and extracts its merchant, date and total, and flags the receipt when it looks like a gambling or betting expense. Called directly by expense-webapp before a claim is submitted. Stores nothing about claims — only its own short-lived conversation record — and never decides or stores a claim itself.",
+  "stories": [1],
+  "skillsPinned": ["agent-building"]
+}
