@@ -29,6 +29,16 @@ x-aep:
     types: [image/jpeg, image/png, application/pdf]
     maxFiles: 1
     maxFileSizeMB: 5
+  guardrails:
+    - policy: granite-guardian-prompt-injection
+      params:
+        riskNames: [jailbreak, prompt_injection]
+      why: "A crafted receipt must not be able to manipulate the extraction with hidden instructions."
+    - policy: nvidia-nemoguard-content-safety
+      params:
+        request:
+          enabled: true
+      why: "An uploaded file that isn't a legitimate receipt — unsafe or inappropriate content — is rejected before extraction runs."
 ---
 
 # Role
