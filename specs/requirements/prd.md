@@ -56,6 +56,12 @@ employee can still correct any of the three before submitting.
 - Guardrail: the receipt-reading agent flags gambling and betting merchants,
 and a claim it flags cannot be submitted — gambling and betting expenses are
 never claimable.
+- Guardrail: uploaded receipts are screened for prompt-injection attempts
+before the agent's extraction is trusted, so a crafted receipt can't
+manipulate it into misreading data or waving through a disallowed claim.
+- Guardrail: uploads that aren't legitimate receipts — unsafe, offensive, or
+otherwise inappropriate content — are rejected before the agent tries to
+extract claim data from them.
 - Finance has no role or screen inside the app; the contact details employees
 put in their notes are read and used by finance entirely outside the
 system, exactly as today.
