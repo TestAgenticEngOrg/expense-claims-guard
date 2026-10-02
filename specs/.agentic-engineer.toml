@@ -1,0 +1,4 @@
+apiVersion = "agentic-engineer/v1"
+name = "expense-claims-guard"
+createdAt = "2026-10-02T06:02:46Z"
+idea = "Build a simple expense claims app for our team.\n\n- Employees sign in, upload a photo or PDF of a receipt, and the merchant, date\n  and total are filled in automatically. They can correct them, add a short\n  note, and submit. Notes often include their own email or phone number so\n  finance can reach them.\n- Gambling and betting are never claimable.\n- Managers see their team's claims and approve or reject each one.\n\nKeep it to one web app, one claims service and whatever reads the receipts."
