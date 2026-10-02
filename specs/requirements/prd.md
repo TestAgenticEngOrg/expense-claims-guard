@@ -30,21 +30,21 @@ rejects each one.
 ## User Stories
 
 1. As an Employee, I want to upload a photo or PDF of a receipt, so that its
- merchant, date and total are filled in for me automatically.
+merchant, date and total are filled in for me automatically.
 2. As an Employee, I want to review and correct the automatically extracted
- merchant, date and total, so that my claim is accurate before I submit it.
+merchant, date and total, so that my claim is accurate before I submit it.
 3. As an Employee, I want to add a short note to my claim, so that I can give
- finance context, including how to reach me if they have questions.
+finance context, including how to reach me if they have questions.
 4. As an Employee, I want to submit a completed claim, so that my manager can
- review it.
+review it.
 5. As an Employee, I want to see the status of my submitted claims, so that I
- know whether each was approved or rejected.
+know whether each was approved or rejected.
 6. As a Manager, I want to see every claim submitted by the people who report
- to me, so that I can review them in one place.
+to me, so that I can review them in one place.
 7. As a Manager, I want to approve or reject each claim, so that only
- legitimate, in-policy expenses are reimbursed.
+legitimate, in-policy expenses are reimbursed.
 8. As a Manager, I want my own claims routed to my own manager for approval,
- so that my spending is reviewed independently rather than by me.
+so that my spending is reviewed independently rather than by me.
 
 ## Product Decisions
 
@@ -60,15 +60,13 @@ never claimable.
 put in their notes are read and used by finance entirely outside the
 system, exactly as today.
 - Every employee, including every manager, has their own manager in the
-reporting hierarchy, and that is who approves their claims.
-- An employee at the top of the hierarchy (with no manager above them) has
-their claims routed to a designated fallback approver rather than left
-unapproved. *assumed*
+reporting hierarchy, and that is who approves their claims. Everyone on this
+team has a manager above them, so there is no top-of-hierarchy case to
+handle.
 - Employees are notified of a decision (approved/rejected) only inside the
 app, on their claims list — no email or other out-of-band notification.
-*assumed*
-- A manager rejecting a claim must give a short reason, so the employee knows
-what to fix or why it was declined. *assumed*
+- A manager rejecting a claim needs no reason — it is a single action with no
+required text.
 
 ## Out of Scope
 
@@ -82,10 +80,7 @@ per claim.
 
 ## Open Questions
 
-1. Who is the designated fallback approver for an employee at the top of the
- reporting hierarchy with no manager of their own (e.g. a specific
- finance/admin user)? Assumed for now that such a person exists and will be
- named at design time.
+None.
 
 ## Further Notes
 
