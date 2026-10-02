@@ -56,7 +56,6 @@ employee can still correct any of the three before submitting.
 - Guardrail: the receipt-reading agent flags gambling and betting merchants,  
 and a claim it flags cannot be submitted — gambling and betting expenses are  
 never claimable.
-
 - Finance has no role or screen inside the app; the contact details employees
 put in their notes are read and used by finance entirely outside the
 system, exactly as today.
